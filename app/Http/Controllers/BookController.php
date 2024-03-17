@@ -22,6 +22,7 @@ class BookController extends Controller
             $book = Book::create($request->validated());
             DB::commit();
             Log::info('Book added successfully.', ['book' => $book->title]);
+            return $this->sendSuccessResponse($book, 'Book has been creatd');
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Book added failed.', ['error' => $e->getMessage()]);
@@ -62,7 +63,6 @@ class BookController extends Controller
             }
             Log::info('Book retreived successfully.', ['book' => $book->title]);
             return $this->sendSuccessResponse(new BookResource($book), 'Book retreived successfully!');
-
         } catch (Exception $e) {
             Log::error('Book retreived failed.', ['error' => $e->getMessage()]);
             return $this->sendErrorResponse($e->getMessage());
@@ -79,6 +79,8 @@ class BookController extends Controller
                 return $this->sendErrorResponse('Book not found', 404);
             }
             $book->update($request->validated());
+            Log::info('Book updated successfully.', ['book' => $book->title]);
+            return $this->sendSuccessResponse(new BookResource($book), 'Book updated successfully!');
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Book updated failed', ['error' => $e->getMessage()]);
